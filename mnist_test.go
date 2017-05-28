@@ -118,20 +118,33 @@ func TestReadIdxWritePngImage(t *testing.T) {
 	header, _ := ReadIdxHeader(idxFile)
 
 	imageIdx := 0
-	outputBytes, _ := ReadIdxImage(idxFile, imageIdx)
+	byteImage, _ := ReadIdxImage(idxFile, imageIdx)
 	pngFile, _ := os.Create(ImageFile + "-" + strconv.Itoa(imageIdx) + ".png")
-	outputImage, _ := WritePngImage(outputBytes, pngFile)
+	outputImage, _ := WritePngImage(byteImage, pngFile)
 	fmt.Printf("outputImage: %v\n", outputImage)
 
-	imageIdx1 := 6666
-	outputBytes1, _ := ReadIdxImage(idxFile, imageIdx1)
+	imageIdx1 := 5000
+	byteImage1, _ := ReadIdxImage(idxFile, imageIdx1)
 	pngFile1, _ := os.Create(ImageFile + "-" + strconv.Itoa(imageIdx1) + ".png")
-	outputImage1, _ := WritePngImage(outputBytes1, pngFile1)
+	outputImage1, _ := WritePngImage(byteImage1, pngFile1)
 	fmt.Printf("outputImage: %v\n", outputImage1)
 
 	imageIdx2 := header.dimensions[0] - 1
-	outputBytes2, _ := ReadIdxImage(idxFile, imageIdx2)
+	byteImage2, _ := ReadIdxImage(idxFile, imageIdx2)
 	pngFile2, _ := os.Create(ImageFile + "-" + strconv.Itoa(imageIdx2) + ".png")
-	outputImage2, _ := WritePngImage(outputBytes2, pngFile2)
+	outputImage2, _ := WritePngImage(byteImage2, pngFile2)
 	fmt.Printf("outputImage: %v\n", outputImage2)
+}
+
+func TestReadIdxWritePngImage2(t *testing.T) {
+
+	idxFile, _ := os.Open(MNIST)
+
+	imageIdxs := []int{5555, 6666, 7777}
+	byteImages, _ := ReadIdxImages(idxFile, imageIdxs)
+	for i, byteImage := range byteImages {
+		pngFile, _ := os.Create(ImageFile + "-" + strconv.Itoa(imageIdxs[i]) + ".png")
+		outputImage, _ := WritePngImage(byteImage, pngFile)
+		fmt.Printf("outputImage: %v\n", outputImage)
+	}
 }
