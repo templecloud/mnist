@@ -1,4 +1,4 @@
-package main
+package idxfile
 
 import (
 	"fmt"
@@ -75,12 +75,12 @@ func TestConvertType(t *testing.T) {
 // MNIST IDX file base tests
 
 const (
-	MNISTPath   = "./data/"
+	MNISTPath   = "../data/"
 	IDXFileName = "t10k-images-idx3-ubyte"
 	IDXFileExt  = ".idx"
 	IDXFile     = IDXFileName + IDXFileExt
 	MNIST       = MNISTPath + IDXFile
-	TestOutput  = "./test-results/"
+	TestOutput  = "../test-results/"
 	ImageFile   = TestOutput + IDXFileName
 )
 

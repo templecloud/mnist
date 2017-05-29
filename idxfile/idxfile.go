@@ -1,4 +1,4 @@
-package main
+package idxfile
 
 import (
 	"os"
@@ -319,7 +319,7 @@ func download(url string, filepath string) (err error) {
 	return nil
 }
 
-func downloadMNIST() (err error) {
+func DownloadMNIST() (err error) {
 	// ensure the specified local directory exist
 	err = os.MkdirAll(MNIST_LOCAL, os.FileMode(0777))
 	if err != nil {
@@ -356,16 +356,4 @@ func downloadMNIST() (err error) {
 		}
 	}
 	return nil
-}
-
-//--------------------------------------------------------------------------------------------------
-
-func main() {
-	pwd, _ := os.Getwd()
-	log.Printf("Current: %s\n", pwd)
-	err := downloadMNIST()
-	if err != nil {
-		log.Println(err)
-	}
-
 }
