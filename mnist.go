@@ -24,6 +24,8 @@ import (
 // ByteImage
 
 // An in-memory image stored as a consecuative array of bytes.
+// NB: The IDX dictates the height and width dimensions hsould actuall be uint32 types. but, that
+// is a bit pointless and a pain in the arse....
 type ByteImage struct {
 	width  int
 	height int
@@ -34,10 +36,10 @@ type ByteImage struct {
 func (img *ByteImage) pixels() [][]byte {
 	byteIdx := 0
 	pixels := make([][]byte, img.height)
-	for i := 0; i < img.height; i++ {
-		pixels[i] = make([]byte, img.width)
-		for j := 0; j < img.width; j++ {
-			pixels[i][j] = img.bytes[byteIdx]
+	for rowIdx := 0; rowIdx < img.height; rowIdx++ {
+		pixels[rowIdx] = make([]byte, img.width)
+		for colIdx := 0; colIdx < img.width; colIdx++ {
+			pixels[rowIdx][colIdx] = img.bytes[byteIdx]
 			byteIdx++
 		}
 	}
@@ -135,13 +137,13 @@ func makeNumDimensions(numDimByte []byte) (int, error) {
 // The header structure of an IDX format file
 type IdxHeader struct {
 	idxMagic   IdxMagic
-	dimensions []int
+	dimensions []uint32
 }
 
-func makeDimension(dimensionBytes []byte) (int, error) {
+func makeDimension(dimensionBytes []byte) (uint32, error) {
 	var dimension uint32
 	err := binary.Read(bytes.NewReader(dimensionBytes), binary.BigEndian, &dimension)
-	return int(dimension), err
+	return dimension, err
 }
 
 func (idx *IdxHeader) fileHeaderOffset() int {
@@ -159,7 +161,7 @@ func ReadIdxHeader(idxFile *os.File) (IdxHeader, []error) {
 	idxMagic := makeIdxMagic(magicBytes)
 	errors = appendError(errors, err)
 	// read dimensional meta data
-	dimensions := make([]int, idxMagic.numDimensions)
+	dimensions := make([]uint32, idxMagic.numDimensions)
 	for n := 0; n < idxMagic.numDimensions; n++ {
 		dimNBytes, err := readBytes(idxFile, 4)
 		errors = appendError(errors, err)
@@ -187,11 +189,11 @@ func appendError(errors []error, error error) []error {
 func ReadIdxImage(idxFile *os.File, imageIdx int) (ByteImage, error) {
 	// extract header
 	idxHeader, _ := ReadIdxHeader(idxFile)
-	// compute images values
-	fileHeaderOffset := idxHeader.fileHeaderOffset()
-	dataWidth := idxHeader.idxMagic.dataType.numBytes
-	imgWidth := idxHeader.dimensions[1]
-	imgHeight := idxHeader.dimensions[2]
+	// compute images values - downcast to int for simplicity...
+	fileHeaderOffset := int(idxHeader.fileHeaderOffset())
+	dataWidth := int(idxHeader.idxMagic.dataType.numBytes)
+	imgWidth := int(idxHeader.dimensions[1])
+	imgHeight := int(idxHeader.dimensions[2])
 	imgSize := imgWidth * imgHeight * dataWidth
 	// calculate offsets (as int64 to obey first seek result)
 	currentOffset, _ := idxFile.Seek(0, 1)
@@ -219,9 +221,9 @@ func ReadIdxImages(idxFile *os.File, imageIdxs []int) ([]ByteImage, error) {
 
 // Read all ByteImages from an IDX format data file.
 func ReadAllIdxImages(idxFile *os.File) ([]ByteImage, error) {
-	// extract header and numImages
+	// extract header and numImages -  - downcast to int for simplicity...
 	idxHeader, _ := ReadIdxHeader(idxFile)
-	numImages := idxHeader.dimensions[0]
+	numImages := int(idxHeader.dimensions[0])
 	// extract images
 	images := make([]ByteImage, numImages)
 	for i := 0; i < numImages; i++ {

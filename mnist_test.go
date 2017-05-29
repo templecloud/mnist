@@ -109,7 +109,7 @@ func TestReadAllIdxImages(t *testing.T) {
 	header, _ := ReadIdxHeader(idxFile)
 	images, _ := ReadAllIdxImages(idxFile)
 	fmt.Printf("num images created: %v\n", len(images))
-	assertEqual(t, header.dimensions[0], len(images), "All images are extracted.")
+	assertEqual(t, int(header.dimensions[0]), len(images), "All images are extracted.")
 }
 
 func TestReadIdxWritePngImage(t *testing.T) {
@@ -129,7 +129,7 @@ func TestReadIdxWritePngImage(t *testing.T) {
 	outputImage1, _ := WritePngImage(byteImage1, pngFile1)
 	fmt.Printf("outputImage: %v\n", outputImage1)
 
-	imageIdx2 := header.dimensions[0] - 1
+	imageIdx2 := int(header.dimensions[0] - 1)
 	byteImage2, _ := ReadIdxImage(idxFile, imageIdx2)
 	pngFile2, _ := os.Create(ImageFile + "-" + strconv.Itoa(imageIdx2) + ".png")
 	outputImage2, _ := WritePngImage(byteImage2, pngFile2)
