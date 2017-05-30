@@ -103,6 +103,18 @@ func Sigmoid(k float64) float64 {
 	return 1.0 / (1.0 + math.Exp(-k))
 }
 
+// Calculate the dot product of two equal length floating point vectors.
+// Simple implementation
+func DotProduct(v1 []float64, v2 []float64) float64 {
+	//	if len(a1) != len(a2) {
+	//		return Err
+	var dp float64 = 0.0
+	for i, v := range v1 {
+		dp += v * v2[i]
+	}
+	return dp
+}
+
 func StochasitcGradientDescent() {
 
 }

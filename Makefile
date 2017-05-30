@@ -1,0 +1,6 @@
+
+build-all:
+	go build./...
+
+test-all:
+	go test ./...
