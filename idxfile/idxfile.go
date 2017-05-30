@@ -256,17 +256,6 @@ func WritePngImage(byteImage ByteImage, pngFile *os.File) (string, error) {
 // MNIST IDX ByteImageStore downloader
 
 //--------------------------------------------------------------------------------------------------
-// http://yann.lecun.com/exdb/mnist/
-
-const (
-	MNIST_LOCAL        = "./data/"
-	MNIST_REMOTE       = "http://yann.lecun.com/exdb/mnist/"
-	MNIST_TRAIN_IMAGES = "train-images-idx3-ubyte.gz"
-	MNIST_TRAIN_LABELS = "train-labels-idx1-ubyte.gz"
-	MNIST_TEST_IMAGES  = "t10k-images-idx3-ubyte.gz"
-	MNIST_TEST_LABELS  = "t10k-labels-idx1-ubyte.gz"
-)
-
 func gunzip(source string, destination string) (err error) {
 	// open an input stream on the source path
 	in, err := os.Open(source)
@@ -319,6 +308,18 @@ func download(url string, filepath string) (err error) {
 	return nil
 }
 
+// http://yann.lecun.com/exdb/mnist/
+const (
+	MNIST_LOCAL        = "./data/"
+	MNIST_REMOTE       = "http://yann.lecun.com/exdb/mnist/"
+	MNIST_TRAIN_IMAGES = "train-images-idx3-ubyte"
+	MNIST_TRAIN_LABELS = "train-labels-idx1-ubyte"
+	MNIST_TEST_IMAGES  = "t10k-images-idx3-ubyte"
+	MNIST_TEST_LABELS  = "t10k-labels-idx1-ubyte"
+	GZIP               = ".gz"
+	IDX                = ".idx"
+)
+
 func DownloadMNIST() (err error) {
 	// ensure the specified local directory exist
 	err = os.MkdirAll(MNIST_LOCAL, os.FileMode(0777))
@@ -330,9 +331,9 @@ func DownloadMNIST() (err error) {
 		MNIST_TRAIN_IMAGES, MNIST_TRAIN_LABELS, MNIST_TEST_IMAGES, MNIST_TEST_LABELS}
 	for _, v := range mnistFiles {
 		// download zipped file
-		source := MNIST_REMOTE + v
-		destination := MNIST_LOCAL + v
-		unarchived := strings.TrimSuffix(destination, ".gz") + ".idx"
+		source := MNIST_REMOTE + v + GZIP
+		destination := MNIST_LOCAL + v + GZIP
+		unarchived := strings.TrimSuffix(destination, GZIP) + IDX
 		if _, err := os.Stat(destination); os.IsNotExist(err) {
 			toDownload := Download{source, destination}
 			log.Printf("Downloading File: %+v\n", toDownload)

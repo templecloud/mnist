@@ -77,7 +77,7 @@ func TestConvertType(t *testing.T) {
 const (
 	MNISTPath   = "../data/"
 	IDXFileName = "t10k-images-idx3-ubyte"
-	IDXFileExt  = ".idx"
+	IDXFileExt  = IDX
 	IDXFile     = IDXFileName + IDXFileExt
 	MNIST       = MNISTPath + IDXFile
 	TestOutput  = "../test-results/"
@@ -137,6 +137,19 @@ func TestReadIdxWritePngImage(t *testing.T) {
 }
 
 func TestReadIdxWritePngImage2(t *testing.T) {
+
+	idxFile, _ := os.Open(MNIST)
+
+	imageIdxs := []int{0, 1, 2, 3, 4, 5}
+	byteImages, _ := ReadIdxImages(idxFile, imageIdxs)
+	for i, byteImage := range byteImages {
+		pngFile, _ := os.Create(ImageFile + "-" + strconv.Itoa(imageIdxs[i]) + ".png")
+		outputImage, _ := WritePngImage(byteImage, pngFile)
+		fmt.Printf("outputImage: %v\n", outputImage)
+	}
+}
+
+func TestReadIdxWritePngImage3(t *testing.T) {
 
 	idxFile, _ := os.Open(MNIST)
 

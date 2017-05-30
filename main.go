@@ -12,9 +12,9 @@ import (
 func main() {
 	pwd, _ := os.Getwd()
 	log.Printf("Current: %s\n", pwd)
+
 	err := idxfile.DownloadMNIST()
 	if err != nil {
 		log.Println(err)
 	}
-
 }
